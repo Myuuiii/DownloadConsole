@@ -104,34 +104,8 @@ namespace DownloadConsole
 
 			string url = AnsiConsole.Ask<string>("Please enter the URL: ");
 
-			bool isRecognized = false;
-			isRecognized = CheckUrlValidity(url);
-
-			if (!isRecognized)
-			{
-				AnsiConsole.MarkupLine(Environment.NewLine + "Validity: [red]Invalid[/]");
-			}
-			else
-			{
-				AnsiConsole.MarkupLine(Environment.NewLine + "Validity: [lime]Valid[/]");
-			}
-
+			bool isRecognized = CheckUrlValidity(url);
 			UrlSource source = DetectUrlSource(url);
-			switch (source)
-			{
-				case UrlSource.NoSource:
-					AnsiConsole.MarkupLine("Source: [gray]Not Recognized[/]");
-					break;
-				case UrlSource.YouTube:
-					AnsiConsole.MarkupLine("Source: [red]You[/][white]Tube[/]");
-					break;
-				case UrlSource.Soundcloud:
-					AnsiConsole.MarkupLine("Source: [orange]SoundCloud[/]");
-					break;
-				case UrlSource.Spotify:
-					AnsiConsole.MarkupLine("Source: [lime]Spotify[/]");
-					break;
-			}
 
 			if (source == UrlSource.NoSource || isRecognized == false)
 			{
@@ -162,10 +136,12 @@ namespace DownloadConsole
 						)
 					{
 						result = true;
+						AnsiConsole.MarkupLine(Environment.NewLine + "Validity: [lime]Valid[/]");
 					}
 					else
 					{
 						result = false;
+						AnsiConsole.MarkupLine(Environment.NewLine + "Validity: [red]Invalid[/]");
 					}
 				});
 			return result;
@@ -173,14 +149,31 @@ namespace DownloadConsole
 
 		static UrlSource DetectUrlSource(string url)
 		{
+			UrlSource src = UrlSource.NoSource;
 			if (url.StartsWith("https://www.youtube.com") || url.StartsWith("https://www.youtu.be"))
-				return UrlSource.YouTube;
+				src = UrlSource.YouTube;
 			if (url.StartsWith("https://soundcloud.com/") || url.StartsWith("https://www.soundcloud.com/"))
-				return UrlSource.Soundcloud;
+				src = UrlSource.Soundcloud;
 			if (url.StartsWith("https://open.spotify.com"))
-				return UrlSource.Spotify;
+				src = UrlSource.Spotify;
 
-			return UrlSource.NoSource;
+			switch (src)
+			{
+				case UrlSource.NoSource:
+					AnsiConsole.MarkupLine("Source: [gray]Not Recognized[/]");
+					break;
+				case UrlSource.YouTube:
+					AnsiConsole.MarkupLine("Source: [red]You[/][white]Tube[/]");
+					break;
+				case UrlSource.Soundcloud:
+					AnsiConsole.MarkupLine("Source: [orange]SoundCloud[/]");
+					break;
+				case UrlSource.Spotify:
+					AnsiConsole.MarkupLine("Source: [lime]Spotify[/]");
+					break;
+			}
+
+			return src;
 		}
 	}
 }
