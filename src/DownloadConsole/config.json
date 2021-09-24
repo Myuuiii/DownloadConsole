@@ -1,1 +1,1 @@
-{"OutputDir":"./","SourcesFile":"","UseCustomThreads":true,"DownloadThreads":4,"SearchThreads":12}
+{ "OutputDir": "./", "SourcesFile": "", "UseCustomThreads": false, "DownloadThreads": 0, "SearchThreads": 0, "DownloadThumbnails": false, "AttatchThumbnails": true }

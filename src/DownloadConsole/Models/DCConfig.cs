@@ -7,5 +7,7 @@ namespace DownloadConsole.Models
 		public bool UseCustomThreads { get; set; } = false;
 		public int DownloadThreads { get; set; } = 0;
 		public int SearchThreads { get; set; } = 0;
+		public bool DownloadThumbnails { get; set; } = false;
+		public bool AttatchThumbnails { get; set; } = true;
 	}
 }
