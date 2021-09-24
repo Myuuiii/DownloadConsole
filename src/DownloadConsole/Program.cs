@@ -17,11 +17,11 @@ namespace DownloadConsole
 		private const string _downloadConfigOption = "Download using stored configuration";
 		private const string _configureOption = "Edit configuration";
 		private const string _exitOption = "Exit";
-		private readonly List<string> AudioFormats = new List<string>{
+		private static readonly List<string> AudioFormats = new List<string>{
 			"mp3", "opus", "flac", "wav"
 		};
 
-		private readonly List<string> VideoFormats = new List<string>{
+		private static readonly List<string> VideoFormats = new List<string>{
 			"mp4", "mkv", "mov", "avi"
 		};
 
@@ -116,6 +116,24 @@ namespace DownloadConsole
 				return;
 			}
 
+			string format = "";
+			SelectionPrompt<string> selectionPrompt = new SelectionPrompt<string>();
+			selectionPrompt.Title("Please select a format");
+
+			switch (source)
+			{
+				case UrlSource.Spotify:
+				case UrlSource.Soundcloud:
+					selectionPrompt.AddChoices(AudioFormats);
+					break;
+				case UrlSource.YouTube:
+					selectionPrompt.AddChoices(AudioFormats);
+					selectionPrompt.AddChoices(VideoFormats);
+					break;
+			}
+
+			format = AnsiConsole.Prompt(selectionPrompt);
+			AnsiConsole.MarkupLine($"Format: [aqua]{format}[/]");
 			Console.ReadKey();
 		}
 
