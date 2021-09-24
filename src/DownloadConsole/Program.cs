@@ -61,7 +61,7 @@ namespace DownloadConsole
 				AnsiConsole.Render(table);
 			}
 
-			Thread.Sleep(1000);
+			Thread.Sleep(3000);
 
 			while (_stayOn)
 			{
@@ -76,6 +76,8 @@ namespace DownloadConsole
 					case _configureOption:
 						break;
 					case _exitOption:
+						AnsiConsole.Clear();
+						AnsiConsole.MarkupLine("[aqua]Byebye![/]");
 						Environment.Exit(0);
 						break;
 				}
@@ -150,27 +152,16 @@ namespace DownloadConsole
 		static UrlSource DetectUrlSource(string url)
 		{
 			UrlSource src = UrlSource.NoSource;
-			if (url.StartsWith("https://www.youtube.com") || url.StartsWith("https://www.youtu.be"))
-				src = UrlSource.YouTube;
-			if (url.StartsWith("https://soundcloud.com/") || url.StartsWith("https://www.soundcloud.com/"))
-				src = UrlSource.Soundcloud;
-			if (url.StartsWith("https://open.spotify.com"))
-				src = UrlSource.Spotify;
+			if (url.StartsWith("https://www.youtube.com") || url.StartsWith("https://www.youtu.be")) src = UrlSource.YouTube;
+			if (url.StartsWith("https://soundcloud.com/") || url.StartsWith("https://www.soundcloud.com/")) src = UrlSource.Soundcloud;
+			if (url.StartsWith("https://open.spotify.com")) src = UrlSource.Spotify;
 
 			switch (src)
 			{
-				case UrlSource.NoSource:
-					AnsiConsole.MarkupLine("Source: [gray]Not Recognized[/]");
-					break;
-				case UrlSource.YouTube:
-					AnsiConsole.MarkupLine("Source: [red]You[/][white]Tube[/]");
-					break;
-				case UrlSource.Soundcloud:
-					AnsiConsole.MarkupLine("Source: [orange]SoundCloud[/]");
-					break;
-				case UrlSource.Spotify:
-					AnsiConsole.MarkupLine("Source: [lime]Spotify[/]");
-					break;
+				case UrlSource.NoSource: AnsiConsole.MarkupLine("Source: [gray]Not Recognized[/]"); break;
+				case UrlSource.YouTube: AnsiConsole.MarkupLine("Source: [red]You[/][white]Tube[/]"); break;
+				case UrlSource.Soundcloud: AnsiConsole.MarkupLine("Source: [yellow]SoundCloud[/]"); break;
+				case UrlSource.Spotify: AnsiConsole.MarkupLine("Source: [lime]Spotify[/]"); break;
 			}
 
 			return src;
