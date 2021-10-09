@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -118,8 +119,19 @@ namespace DownloadConsole
 			{
 				AnsiConsole.Clear();
 				AnsiConsole.Render(new Rule("Downloading multiple URLs (In progress)").Alignment(Justify.Left));
-				string sourceUrl = dataLine.Split(' ')[0];
-				string targetFormat = dataLine.Split(' ')[1];
+
+				string sourceUrl = "";
+				string targetFormat = "";
+				if (dataLine.Split(' ').Length >= 2)
+				{
+					sourceUrl = dataLine.Split(' ')[0];
+					targetFormat = dataLine.Split(' ')[1];
+				}
+				else continue;
+
+				string folderName = "Single Item";
+				if (dataLine.Split(' ').Length >= 3)
+					folderName = string.Join(' ', dataLine.Split(' ').Skip(2));
 
 				bool isRecognized = CheckUrlValidity(sourceUrl);
 				UrlSource source = DetectUrlSource(sourceUrl);
@@ -147,6 +159,8 @@ namespace DownloadConsole
 				AnsiConsole.MarkupLine($"Format: [aqua]{targetFormat}[/]");
 				ShowDownloadInformation();
 
+				AnsiConsole.MarkupLine($"Current Item: [yellow]{folderName}[/]");
+
 				// Start the download
 				AnsiConsole.WriteLine();
 				AnsiConsole.Render(new Rule("Download Output").Alignment(Justify.Left));
@@ -160,6 +174,7 @@ namespace DownloadConsole
 					errors++;
 				}
 				AnsiConsole.Render(new Rule("Download complete").Alignment(Justify.Left));
+				Thread.Sleep(1000);
 			}
 
 			AnsiConsole.Clear();
@@ -314,49 +329,63 @@ namespace DownloadConsole
 
 		static bool Download(UrlSource source, string url, string format)
 		{
-			try
+			AnsiConsole.Status()
+			.Start("Downloading...", ctx =>
 			{
-				StringBuilder command = new StringBuilder();
-				command.Append($"/c cd {_config.OutputDir} && ");
-
-				switch (source)
+				try
 				{
-					case UrlSource.YouTube:
-					case UrlSource.Soundcloud:
-						command.Append($"youtube-dl -o %(title)s.%(ext)s --yes-playlist --audio-quality 0 --add-metadata ");
+					StringBuilder command = new StringBuilder();
+					command.Append($"/c cd {_config.OutputDir} && ");
 
-						if (AudioFormats.Contains(format))
-						{
-							command.Append($"--extract-audio --audio-format \"{format}\" ");
-							if (_config.DownloadThumbnails)
-								command.Append($"--write-thumbnail ");
-							if (_config.AttatchThumbnails)
-								command.Append($"--embed-thumbnail ");
-						}
+					switch (source)
+					{
+						case UrlSource.YouTube:
+						case UrlSource.Soundcloud:
+							command.Append($"youtube-dl -o %(title)s.%(ext)s --yes-playlist --audio-quality 0 --add-metadata ");
 
-						if (VideoFormats.Contains(format))
-							command.Append($"--format \"bestvideo+bestaudio[ext=m4a]/bestvideo+bestaudio/best\" --merge-output-format {format} ");
+							if (AudioFormats.Contains(format))
+							{
+								command.Append($"--extract-audio --audio-format \"{format}\" ");
+								if (_config.DownloadThumbnails)
+									command.Append($"--write-thumbnail ");
+								if (_config.AttatchThumbnails)
+									command.Append($"--embed-thumbnail ");
+							}
 
-						command.Append(url);
-						break;
-					case UrlSource.Spotify:
-						command.Append($"spotdl --output-format \"{format}\" ");
-						if (_config.UseCustomThreads)
-						{
-							command.Append($"--download-threads {_config.DownloadThreads} ");
-							command.Append($"--search-threads {_config.SearchThreads} ");
-						}
-						command.Append(url);
-						break;
+							if (VideoFormats.Contains(format))
+								command.Append($"--format \"bestvideo+bestaudio[ext=m4a]/bestvideo+bestaudio/best\" --merge-output-format {format} ");
+
+							command.Append(url);
+							break;
+						case UrlSource.Spotify:
+							command.Append($"spotdl --output-format \"{format}\" ");
+							if (_config.UseCustomThreads)
+							{
+								command.Append($"--download-threads {_config.DownloadThreads} ");
+								command.Append($"--search-threads {_config.SearchThreads} ");
+							}
+							command.Append(url);
+							break;
+					}
+
+					Process p = new Process();
+					p.StartInfo.FileName = "cmd";
+					p.StartInfo.Arguments = command.ToString();
+					p.StartInfo.UseShellExecute = false;
+					p.StartInfo.RedirectStandardError = true;
+					p.StartInfo.RedirectStandardInput = true;
+					p.StartInfo.RedirectStandardOutput = true;
+					p.Start();
+
+					p.WaitForExit();
+					return true;
 				}
-
-				Process.Start("cmd", command.ToString()).WaitForExit();
-				return true;
-			}
-			catch
-			{
-				return false;
-			}
+				catch
+				{
+					return false;
+				}
+			});
+			return true;
 		}
 
 		static void ShowConfig()
