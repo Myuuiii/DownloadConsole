@@ -29,6 +29,10 @@ namespace DownloadConsole
 			"mp4", "mkv", "mov", "avi"
 		};
 
+		/// <summary>
+		/// The main entry point of the application
+		/// </summary>
+		/// <param name="args">Any arguments provided at the execution of the program</param>
 		static void Main(string[] args)
 		{
 			if (!File.Exists("config.json"))
@@ -93,6 +97,9 @@ namespace DownloadConsole
 			Environment.Exit(0);
 		}
 
+		/// <summary>
+		/// Show the main menu
+		/// </summary>
 		static string DrawMainMenu()
 		{
 			AnsiConsole.Render(new Rule("Main Menu").Alignment(Justify.Left));
@@ -108,6 +115,9 @@ namespace DownloadConsole
 			return option;
 		}
 
+		/// <summary>
+		/// Show the multiple download menu
+		/// </summary>
 		static void DownloadMultiMenu()
 		{
 			AnsiConsole.Clear();
@@ -189,6 +199,9 @@ namespace DownloadConsole
 			Console.ReadKey();
 		}
 
+		/// <summary>
+		/// Show the single download menu
+		/// </summary>
 		static void DownloadSingleMenu()
 		{
 			AnsiConsole.Clear();
@@ -238,6 +251,9 @@ namespace DownloadConsole
 		//
 		//
 
+		/// <summary>
+		/// Show information about the current download
+		/// </summary>
 		static void ShowDownloadInformation()
 		{
 			AnsiConsole.Markup($"Download Thumbail: ");
@@ -253,6 +269,11 @@ namespace DownloadConsole
 				AnsiConsole.MarkupLine("[red]No[/]");
 		}
 
+		/// <summary>
+		/// Select a format for downloading the given source
+		/// </summary>
+		/// <param name="source">Source for which to show the available formats</param>
+		/// <returns><see cref="string"/></returns>
 		static string SelectFormat(UrlSource source)
 		{
 			string format = "";
@@ -274,6 +295,12 @@ namespace DownloadConsole
 
 			return format;
 		}
+
+		/// <summary>
+		/// Check if a url is valid
+		/// </summary>
+		/// <param name="url">Url to validate</param>
+		/// <returns><see cref="bool"/></returns>
 		static bool CheckUrlValidity(string url)
 		{
 			bool result = false;
@@ -301,6 +328,11 @@ namespace DownloadConsole
 			return result;
 		}
 
+		/// <summary>
+		/// Detect the source of a url
+		/// </summary>
+		/// <param name="url">Url of whcih to detect the source</param>
+		/// <returns><see cref="UrlSource" /></returns>
 		static UrlSource DetectUrlSource(string url)
 		{
 			UrlSource src = UrlSource.NoSource;
@@ -327,6 +359,13 @@ namespace DownloadConsole
 			return src;
 		}
 
+		/// <summary>
+		/// Download a song
+		/// </summary>
+		/// <param name="source">Url source</param>
+		/// <param name="url">Url of the video/track to download</param>
+		/// <param name="format">Format to download the video/track in </param>
+		/// <returns><see cref="bool"/><returns>
 		static bool Download(UrlSource source, string url, string format)
 		{
 			AnsiConsole.Status()
@@ -388,6 +427,9 @@ namespace DownloadConsole
 			return true;
 		}
 
+		/// <summary>
+		/// show the currently loaded configuration
+		/// </summary>
 		static void ShowConfig()
 		{
 			AnsiConsole.Clear();
