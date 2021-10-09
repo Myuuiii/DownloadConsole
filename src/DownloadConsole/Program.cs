@@ -84,7 +84,8 @@ namespace DownloadConsole
 						_config = JsonSerializer.Deserialize<DCConfig>(File.ReadAllText("config.json"));
 						AnsiConsole.Clear();
 						AnsiConsole.MarkupLine("[yellow]Configuration was reloaded[/]");
-						Thread.Sleep(2000);
+						AnsiConsole.MarkupLine("Press any key to go back to the main menu...");
+						Console.ReadLine();
 						break;
 					case _customizeConfigurationOption:
 						break;
@@ -125,6 +126,7 @@ namespace DownloadConsole
 			AnsiConsole.Render(new Rule("Downloading multiple URLs").Alignment(Justify.Left));
 			string[] dataLines = File.ReadAllLines(_config.SourcesFile);
 			int errors = 0;
+			int currentItem = 1;
 
 			foreach (string dataLine in dataLines)
 			{
@@ -140,7 +142,7 @@ namespace DownloadConsole
 				}
 				else continue;
 
-				string folderName = "Single Item";
+				string folderName = "";
 				if (dataLine.Split(' ').Length >= 3)
 					folderName = string.Join(' ', dataLine.Split(' ').Skip(2));
 
@@ -170,12 +172,12 @@ namespace DownloadConsole
 				AnsiConsole.MarkupLine($"Format: [aqua]{targetFormat}[/]");
 				ShowDownloadInformation();
 
-				AnsiConsole.MarkupLine($"Current Item: [yellow]{folderName}[/]");
+				AnsiConsole.MarkupLine($"Current Item: [aqua]{currentItem}/{dataLines.Length}[/] ---> [yellow]{folderName}[/]");
 
 				// Start the download
 				AnsiConsole.WriteLine();
 				AnsiConsole.Render(new Rule("Download Output").Alignment(Justify.Left));
-				if (Download(source, sourceUrl, targetFormat))
+				if (Download(source, sourceUrl, targetFormat, folderName))
 				{
 					AnsiConsole.MarkupLine($"[lime] Download Succesful [/]: {sourceUrl}");
 				}
@@ -186,6 +188,7 @@ namespace DownloadConsole
 				}
 				AnsiConsole.Render(new Rule("Download complete").Alignment(Justify.Left));
 				Thread.Sleep(1000);
+				currentItem++;
 			}
 
 			AnsiConsole.Clear();
@@ -367,7 +370,7 @@ namespace DownloadConsole
 		/// <param name="url">Url of the video/track to download</param>
 		/// <param name="format">Format to download the video/track in </param>
 		/// <returns><see cref="bool"/><returns>
-		static bool Download(UrlSource source, string url, string format)
+		static bool Download(UrlSource source, string url, string format, string extraDir = null)
 		{
 			AnsiConsole.Status()
 			.Start("Downloading...", ctx =>
@@ -375,7 +378,9 @@ namespace DownloadConsole
 				try
 				{
 					StringBuilder command = new StringBuilder();
-					command.Append($"/c cd {_config.OutputDir} && ");
+					if (!Directory.Exists($"{_config.OutputDir}/{extraDir}"))
+						Directory.CreateDirectory($"{_config.OutputDir}/{extraDir}");
+					command.Append($"/c cd \"{_config.OutputDir}/{extraDir}\" && ");
 
 					switch (source)
 					{
