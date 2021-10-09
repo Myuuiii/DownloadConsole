@@ -21,6 +21,7 @@ namespace DownloadConsole
 		private const string _reloadConfigOption = "Reload configuration";
 		private const string _customizeConfigurationOption = "[red]Edit configuration[/]";
 		private const string _exitOption = "Exit";
+
 		private static readonly List<string> AudioFormats = new List<string>{
 			"mp3", "opus", "flac", "wav"
 		};
@@ -145,17 +146,17 @@ namespace DownloadConsole
 
 				bool isRecognized = CheckUrlValidity(sourceUrl);
 				UrlSource source = DetectUrlSource(sourceUrl);
-				bool canDonwload = false;
+				bool canDownload = false;
 
 				if (source == UrlSource.Spotify || source == UrlSource.Soundcloud)
 				{
 					if (AudioFormats.Contains(targetFormat))
-					{ canDonwload = true; }
+					{ canDownload = true; }
 				}
 				else if (source == UrlSource.YouTube)
 				{
 					if (AudioFormats.Contains(targetFormat) || VideoFormats.Contains(targetFormat))
-					{ canDonwload = true; }
+					{ canDownload = true; }
 				}
 
 
