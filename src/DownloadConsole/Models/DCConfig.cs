@@ -8,6 +8,6 @@ namespace DownloadConsole.Models
 		public int DownloadThreads { get; set; } = 0;
 		public int SearchThreads { get; set; } = 0;
 		public bool DownloadThumbnails { get; set; } = false;
-		public bool AttatchThumbnails { get; set; } = true;
+		public bool AttachThumbnails { get; set; } = true;
 	}
 }

@@ -51,7 +51,7 @@ namespace DownloadConsole
 					config.SearchThreads = AnsiConsole.Ask<int>("How many threads would you like yo assign for searching");
 				}
 				config.DownloadThumbnails = AnsiConsole.Confirm("Would you like to download the thumbnails for Soundcloud/YouTube downloads (separate picutre files)? ", false);
-				config.AttatchThumbnails = AnsiConsole.Confirm("Would you like to attatch the thumbnails to SoundCloud/YouTube downloads", true);
+				config.AttachThumbnails = AnsiConsole.Confirm("Would you like to attach the thumbnails to SoundCloud/YouTube downloads", true);
 
 				AnsiConsole.MarkupLine("[lime]Config file has been created[/]");
 
@@ -266,8 +266,8 @@ namespace DownloadConsole
 			else
 				AnsiConsole.MarkupLine("[red]No[/]");
 
-			AnsiConsole.Markup($"Attatch Thumbail: ");
-			if (_config.AttatchThumbnails)
+			AnsiConsole.Markup($"Attach Thumbail: ");
+			if (_config.AttachThumbnails)
 				AnsiConsole.MarkupLine("[lime]Yes[/]");
 			else
 				AnsiConsole.MarkupLine("[red]No[/]");
@@ -393,7 +393,7 @@ namespace DownloadConsole
 								command.Append($"--extract-audio --audio-format \"{format}\" ");
 								if (_config.DownloadThumbnails)
 									command.Append($"--write-thumbnail ");
-								if (_config.AttatchThumbnails)
+								if (_config.AttachThumbnails)
 									command.Append($"--embed-thumbnail ");
 							}
 
@@ -448,7 +448,7 @@ namespace DownloadConsole
 					.AddRow("Download Threads", _config.DownloadThreads.ToString())
 					.AddRow("Search Threads", _config.SearchThreads.ToString())
 					.AddRow("Download Thumbnails", _config.DownloadThumbnails.ToString())
-					.AddRow("Attatch Thumbnails", _config.AttatchThumbnails.ToString())
+					.AddRow("Attach Thumbnails", _config.AttachThumbnails.ToString())
 					.Border(TableBorder.Rounded);
 			AnsiConsole.Render(table);
 			AnsiConsole.WriteLine();
