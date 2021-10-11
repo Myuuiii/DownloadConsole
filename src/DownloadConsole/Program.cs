@@ -38,7 +38,7 @@ namespace DownloadConsole
 		{
 			if (!File.Exists("config.json"))
 			{
-				AnsiConsole.Render(new Rule("Configuration").Alignment(Justify.Left));
+				AnsiConsole.Write(new Rule("Configuration").Alignment(Justify.Left));
 
 				AnsiConsole.MarkupLine("[red]Config not found![/]");
 				DCConfig config = new DCConfig();
@@ -104,7 +104,7 @@ namespace DownloadConsole
 		/// </summary>
 		static string DrawMainMenu()
 		{
-			AnsiConsole.Render(new Rule("Main Menu").Alignment(Justify.Left));
+			AnsiConsole.Write(new Rule("Main Menu").Alignment(Justify.Left));
 			string option = AnsiConsole.Prompt(new SelectionPrompt<string>()
 				.AddChoices(new[] {
 					_downloadSingleOption,
@@ -123,7 +123,7 @@ namespace DownloadConsole
 		static void DownloadMultiMenu()
 		{
 			AnsiConsole.Clear();
-			AnsiConsole.Render(new Rule("Downloading multiple URLs").Alignment(Justify.Left));
+			AnsiConsole.Write(new Rule("Downloading multiple URLs").Alignment(Justify.Left));
 			string[] dataLines = File.ReadAllLines(_config.SourcesFile);
 			int errors = 0;
 			int currentItem = 1;
@@ -131,7 +131,7 @@ namespace DownloadConsole
 			foreach (string dataLine in dataLines)
 			{
 				AnsiConsole.Clear();
-				AnsiConsole.Render(new Rule("Downloading multiple URLs (In progress)").Alignment(Justify.Left));
+				AnsiConsole.Write(new Rule("Downloading multiple URLs (In progress)").Alignment(Justify.Left));
 
 				string sourceUrl = "";
 				string targetFormat = "";
@@ -176,7 +176,7 @@ namespace DownloadConsole
 
 				// Start the download
 				AnsiConsole.WriteLine();
-				AnsiConsole.Render(new Rule("Download Output").Alignment(Justify.Left));
+				AnsiConsole.Write(new Rule("Download Output").Alignment(Justify.Left));
 				if (Download(source, sourceUrl, targetFormat, folderName))
 				{
 					AnsiConsole.MarkupLine($"[lime] Download Succesful [/]: {sourceUrl}");
@@ -186,13 +186,13 @@ namespace DownloadConsole
 					AnsiConsole.MarkupLine($"[red] Download Failed [/]: {sourceUrl}");
 					errors++;
 				}
-				AnsiConsole.Render(new Rule("Download complete").Alignment(Justify.Left));
+				AnsiConsole.Write(new Rule("Download complete").Alignment(Justify.Left));
 				Thread.Sleep(1000);
 				currentItem++;
 			}
 
 			AnsiConsole.Clear();
-			AnsiConsole.Render(new Rule("Downloading multiple URLs (Completed)").Alignment(Justify.Left));
+			AnsiConsole.Write(new Rule("Downloading multiple URLs (Completed)").Alignment(Justify.Left));
 
 			AnsiConsole.MarkupLine("[lime] Successfully completed queue [/]");
 
@@ -209,7 +209,7 @@ namespace DownloadConsole
 		static void DownloadSingleMenu()
 		{
 			AnsiConsole.Clear();
-			AnsiConsole.Render(new Rule("Downloading single URL (In progress)").Alignment(Justify.Left));
+			AnsiConsole.Write(new Rule("Downloading single URL (In progress)").Alignment(Justify.Left));
 
 			string url = AnsiConsole.Ask<string>("Please enter the URL: ");
 
@@ -232,14 +232,14 @@ namespace DownloadConsole
 			if (Download(source, url, format))
 			{
 				AnsiConsole.Clear();
-				AnsiConsole.Render(new Rule("Downloading single URL (Completed)").Alignment(Justify.Left));
+				AnsiConsole.Write(new Rule("Downloading single URL (Completed)").Alignment(Justify.Left));
 				AnsiConsole.MarkupLine("[lime] Download Succesful [/]");
 				AnsiConsole.WriteLine("Press any key to return to the main menu...");
 			}
 			else
 			{
 				AnsiConsole.Clear();
-				AnsiConsole.Render(new Rule("Downloading single URL (Failed)").Alignment(Justify.Left));
+				AnsiConsole.Write(new Rule("Downloading single URL (Failed)").Alignment(Justify.Left));
 				AnsiConsole.MarkupLine("[red] Download Failed [/]");
 				AnsiConsole.WriteLine("Press any key to return to the main menu...");
 			}
@@ -439,7 +439,7 @@ namespace DownloadConsole
 		static void ShowConfig()
 		{
 			AnsiConsole.Clear();
-			AnsiConsole.Render(new Rule("Configuration").Alignment(Justify.Left));
+			AnsiConsole.Write(new Rule("Configuration").Alignment(Justify.Left));
 			Table table = new Table()
 					.AddColumns(new[] { "Option", "Value" })
 					.AddRow("Output Directory", _config.OutputDir)
@@ -450,7 +450,7 @@ namespace DownloadConsole
 					.AddRow("Download Thumbnails", _config.DownloadThumbnails.ToString())
 					.AddRow("Attach Thumbnails", _config.AttachThumbnails.ToString())
 					.Border(TableBorder.Rounded);
-			AnsiConsole.Render(table);
+			AnsiConsole.Write(table);
 			AnsiConsole.WriteLine();
 		}
 	}
