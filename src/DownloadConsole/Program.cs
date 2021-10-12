@@ -372,65 +372,51 @@ namespace DownloadConsole
 		/// <returns><see cref="bool"/><returns>
 		static bool Download(UrlSource source, string url, string format, string extraDir = null)
 		{
-			AnsiConsole.Status()
-			.Start("Downloading...", ctx =>
+			try
 			{
-				try
+				StringBuilder command = new StringBuilder();
+				if (!Directory.Exists($"{_config.OutputDir}/{extraDir}"))
+					Directory.CreateDirectory($"{_config.OutputDir}/{extraDir}");
+				command.Append($"/c cd \"{_config.OutputDir}/{extraDir}\" && ");
+
+				switch (source)
 				{
-					StringBuilder command = new StringBuilder();
-					if (!Directory.Exists($"{_config.OutputDir}/{extraDir}"))
-						Directory.CreateDirectory($"{_config.OutputDir}/{extraDir}");
-					command.Append($"/c cd \"{_config.OutputDir}/{extraDir}\" && ");
+					case UrlSource.YouTube:
+					case UrlSource.Soundcloud:
+						command.Append($"youtube-dl -o %(title)s.%(ext)s --yes-playlist --audio-quality 0 --add-metadata ");
 
-					switch (source)
-					{
-						case UrlSource.YouTube:
-						case UrlSource.Soundcloud:
-							command.Append($"youtube-dl -o %(title)s.%(ext)s --yes-playlist --audio-quality 0 --add-metadata ");
+						if (AudioFormats.Contains(format))
+						{
+							command.Append($"--extract-audio --audio-format \"{format}\" ");
+							if (_config.DownloadThumbnails)
+								command.Append($"--write-thumbnail ");
+							if (_config.AttachThumbnails)
+								command.Append($"--embed-thumbnail ");
+						}
 
-							if (AudioFormats.Contains(format))
-							{
-								command.Append($"--extract-audio --audio-format \"{format}\" ");
-								if (_config.DownloadThumbnails)
-									command.Append($"--write-thumbnail ");
-								if (_config.AttachThumbnails)
-									command.Append($"--embed-thumbnail ");
-							}
+						if (VideoFormats.Contains(format))
+							command.Append($"--format \"bestvideo+bestaudio[ext=m4a]/bestvideo+bestaudio/best\" --merge-output-format {format} ");
 
-							if (VideoFormats.Contains(format))
-								command.Append($"--format \"bestvideo+bestaudio[ext=m4a]/bestvideo+bestaudio/best\" --merge-output-format {format} ");
-
-							command.Append(url);
-							break;
-						case UrlSource.Spotify:
-							command.Append($"spotdl --output-format \"{format}\" ");
-							if (_config.UseCustomThreads)
-							{
-								command.Append($"--download-threads {_config.DownloadThreads} ");
-								command.Append($"--search-threads {_config.SearchThreads} ");
-							}
-							command.Append(url);
-							break;
-					}
-
-					Process p = new Process();
-					p.StartInfo.FileName = "cmd";
-					p.StartInfo.Arguments = command.ToString();
-					p.StartInfo.UseShellExecute = false;
-					p.StartInfo.RedirectStandardError = true;
-					p.StartInfo.RedirectStandardInput = true;
-					p.StartInfo.RedirectStandardOutput = true;
-					p.Start();
-
-					p.WaitForExit();
-					return true;
+						command.Append(url);
+						break;
+					case UrlSource.Spotify:
+						command.Append($"spotdl --output-format \"{format}\" ");
+						if (_config.UseCustomThreads)
+						{
+							command.Append($"--download-threads {_config.DownloadThreads} ");
+							command.Append($"--search-threads {_config.SearchThreads} ");
+						}
+						command.Append(url);
+						break;
 				}
-				catch
-				{
-					return false;
-				}
-			});
-			return true;
+
+				Process.Start("cmd", command.ToString()).WaitForExit();
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		/// <summary>
